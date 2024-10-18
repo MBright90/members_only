@@ -1,0 +1,40 @@
+{
+  "name": "members_only",
+  "version": "1.0.0",
+  "description": "An app to practice using authentication in express",
+  "main": "app.js",
+  "scripts": {
+    "startdev": "nodemon app.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MBright90/members_only.git"
+  },
+  "author": "mbright90",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MBright90/members_only/issues"
+  },
+  "homepage": "https://github.com/MBright90/members_only#readme",
+  "dependencies": {
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "nodemon": "^3.1.7",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.11.0",
+    "prettier": "3.3.3"
+  }
+}
