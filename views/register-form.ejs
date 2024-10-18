@@ -1,0 +1,31 @@
+<%- include("./partials/head") %>
+
+<body>
+    <h1>Register</h1>
+    <form action="/register" method="POST">
+        <div>
+            <label for="username">Username: </label>
+            <input type="text" name="username" id="username"/>
+        </div>
+        <div>
+            <label for="password">Username: </label>
+            <input type="password" name="password" id="password"/>
+        </div>
+        <div>
+            <label for="first_name">Username: </label>
+            <input type="text" name="first_name" id="first_name"/>
+        </div>
+        <div>
+            <label for="last_name">Username: </label>
+            <input type="text" name="last_name" id="last_name"/>
+        </div>
+        <div>
+            <label for="membership">Membership type: </label>
+            <input type="radio" name="membership" id="paid-membership" vale="Paid">
+            <input type="radio" name="membership" id="free-membership" vale="Free">
+        </div>
+        <button type="submit">Log in</button>
+    </form>
+</body>
+
+<%- include("./partials/foot") %>
