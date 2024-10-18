@@ -1,11 +1,11 @@
 <%- include("./partials/head") %>
 
 <body>
-    <h1>Welcome</h1>
+    <h1>Welcome <%= user.first_name %></h1>
     <br>
-    <p>Please <a href="/log-in">Log in</a></p>
-    <br>
-    <p>Not logged in? <a href="register">Register</a></p>
+    <a href="/log-out">Log out</a>
 </body>
+
+
 
 <%- include("./partials/foot") %>
