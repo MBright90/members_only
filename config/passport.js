@@ -1,12 +1,12 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
-const userController = require("./controllers/userController");
+const { getUserById, getUserByUsername } = require("../queries/userQueries");
 const { validPassword } = require("../lib/passwordUtils");
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      const user = await userController.getUserByUsername(username);
+      const user = await getUserByUsername(username);
 
       if (!user) return done(null, false);
 
@@ -26,7 +26,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (userId, done) => {
   try {
-    const user = 'lol' // get user
+    const user = await getUserById(userId);
     done(null, user);
   } catch (err) {
     done(err);
