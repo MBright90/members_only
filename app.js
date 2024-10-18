@@ -4,11 +4,13 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const db = require("./config/database");
-const router = require("./routes");
+const router = require("./routes/homeRoutes");
 
 const PgStore = require("connect-pg-simple")(session);
 
 const app = express();
+
+app.set("view engine", "ejs");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

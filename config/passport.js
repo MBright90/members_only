@@ -1,6 +1,6 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
-const { getUserById, getUserByUsername } = require("../queries/userQueries");
+const { getUserById, getUserByUsername } = require("../models/user");
 const { validPassword } = require("../lib/passwordUtils");
 
 passport.use(
@@ -10,10 +10,13 @@ passport.use(
 
       if (!user) return done(null, false);
 
-      const isValid = validPassword(password, user.hash);
+      const isValid = validPassword(password, user.hash, user.salt);
 
-      if (isValid) return done(null, user);
-      return done(null, false);
+      if (isValid) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
     } catch (err) {
       return done(err);
     }
