@@ -1,4 +1,4 @@
-<%- include("./partials/head") %>
+<%- include("../partials/head") %>
 
 <body>
     <h1>Register</h1>
@@ -7,25 +7,30 @@
             <label for="username">Username: </label>
             <input type="text" name="username" id="username"/>
         </div>
+        <br>
         <div>
-            <label for="password">Username: </label>
+            <label for="password">Password: </label>
             <input type="password" name="password" id="password"/>
         </div>
+        <br>
         <div>
-            <label for="first_name">Username: </label>
+            <label for="first_name">First name: </label>
             <input type="text" name="first_name" id="first_name"/>
         </div>
+        <br>
         <div>
-            <label for="last_name">Username: </label>
+            <label for="last_name">Last name: </label>
             <input type="text" name="last_name" id="last_name"/>
         </div>
+        <br>
         <div>
             <label for="membership">Membership type: </label>
-            <input type="radio" name="membership" id="paid-membership" vale="Paid">
-            <input type="radio" name="membership" id="free-membership" vale="Free">
+            <label>Paid <input type="radio" name="membership" id="paid-membership" vale="Paid"></label>
+            <label>Free <input type="radio" name="membership" id="free-membership" vale="Free"></label>
         </div>
+        <br>
         <button type="submit">Log in</button>
     </form>
 </body>
 
-<%- include("./partials/foot") %>
+<%- include("../partials/foot") %>

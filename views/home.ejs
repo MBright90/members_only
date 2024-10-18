@@ -1,7 +1,7 @@
 <%- include("./partials/head") %>
 
 <body>
-    <h1>Welcome <%= user.first_name %></h1>
+    <h1>Welcome <%= name ? name : '' %></h1>
     <br>
     <a href="/log-out">Log out</a>
 </body>
