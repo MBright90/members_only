@@ -1,21 +1,15 @@
 const db = require("../config/database");
 
-async function getUserByUsername(username) {
-  const { rows } = await db.query(
-    "SELECT * FROM users WHERE username = ($1);",
-    [username],
-  );
-  return rows[0] || new Error("User not found");
-}
+// TABLE users
+// id: integer,
+// username: VARCHAR,
+// first_name: VARCHAR,
+// last_name: VARCHAR,
+// hash: VARCHAR,
+// salt: VARCHAR,
+// membership: VARCHAR (paid/free)
 
-async function getUserById(userId) {
-  const { rows } = await db.query("SELECT * FROM users WHERE id = ($1);", [
-    userId,
-  ]);
-  return rows[0] || new Error("User not found");
-}
-
-async function createNewUser(
+module.exports.createNewUser = async function (
   username,
   firstName,
   lastName,
@@ -27,11 +21,19 @@ async function createNewUser(
     "INSERT INTO users (username, first_name, last_name, hash, salt, membership) VALUES (($1), ($2), ($3), ($4), ($5), ($6));",
     [username, firstName, lastName, hash, salt, membership],
   );
-  console.log(`new user registered: ${username}`);
-}
+};
 
-module.exports = {
-  getUserByUsername,
-  getUserById,
-  createNewUser,
+module.exports.getUserByUsername = async function (username) {
+  const { rows } = await db.query(
+    "SELECT * FROM users WHERE username = ($1);",
+    [username],
+  );
+  return rows[0] || new Error("User not found");
+};
+
+module.exports.getUserById = async function (userId) {
+  const { rows } = await db.query("SELECT * FROM users WHERE id = ($1);", [
+    userId,
+  ]);
+  return rows[0] || new Error("User not found");
 };
