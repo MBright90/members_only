@@ -1,0 +1,22 @@
+<% include("./partials/head") %>
+
+<body>
+    <h1>Recent Posts</h1>
+
+    <% if (posts.length > 0) { %>
+
+        <% for (let post in posts) { %>
+            <div class="post">
+                <h2><%= post.title %></h2>
+                <p><%= post.message %></p>
+                <p>Written by: <%= post.author %></p>
+            </div>
+        <% } %>
+
+    <% } else { %>
+
+        <p>No posts found</p>
+
+    <% } %>
+
+</body>

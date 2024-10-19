@@ -1,0 +1,21 @@
+<% include("./partials/head") %>
+
+<body>
+    <h1><%= username %>'s Posts</h1>
+
+    <% if (posts.length > 0) { %>
+
+        <% for (let post in posts) { %>
+            <div class="post">
+                <h2><%= post.title %></h2>
+                <p><%= post.message %></p>
+            </div>
+        <% } %>
+
+    <% } else { %>
+
+        <p>No posts found</p>
+
+    <% } %>
+
+</body>
