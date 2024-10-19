@@ -13,14 +13,7 @@ router.post(
   }),
 );
 
-router.post("/register", async (req, res, next) => {
-  try {
-    await userController.addUserToDatabase(req.body);
-    res.redirect("/log-in");
-  } catch (err) {
-    next(err);
-  }
-});
+router.post("/register", userController.addUserToDatabase);
 
 // --- GET ROUTES --- //
 
