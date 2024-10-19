@@ -1,6 +1,9 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
-const { getUserById, getUserByUsername } = require("../models/user");
+const {
+  getUserById,
+  getUserByUsername,
+} = require("../controllers/userController");
 const { validPassword } = require("../lib/passwordUtils");
 
 passport.use(
