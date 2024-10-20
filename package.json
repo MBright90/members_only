@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/MBright90/members_only#readme",
   "dependencies": {
+    "@prisma/client": "^5.21.1",
+    "@quixo3/prisma-session-store": "^3.1.13",
     "connect-pg-simple": "^10.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -35,6 +37,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.11.0",
-    "prettier": "3.3.3"
+    "prettier": "3.3.3",
+    "prisma": "^5.21.1"
   }
 }
