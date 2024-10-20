@@ -1,11 +1,14 @@
 <%- include("./partials/head") %>
 
 <body>
-    <h1>Welcome <%= name ? name : '' %></h1>
+    <h1>Welcome <%= user ? user.name : '' %></h1>
+    <a href="/posts/new">Create new post</a>
     <br>
-    <a href="/log-out">Log out</a>
+    <a href="/posts/">View all posts</a>
+    <br>
+    <a href="/posts/<%=user.id%>" style="margin-top: 10px;">View your posts</a>
+    <br>
+    <a href="/log-out" style="margin-top: 10px;">Log out</a>
 </body>
-
-
 
 <%- include("./partials/foot") %>
