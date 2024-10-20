@@ -5,7 +5,7 @@ const session = require("express-session");
 const passport = require("passport");
 const cors = require("cors");
 const db = require("./config/database");
-const PgStore = require("connect-pg-simple")(session);
+const PrismaStore = require("@quixo3/prisma-session-store");
 
 // Routers
 const homeRouter = require("./routes/homeRoutes");
@@ -19,10 +19,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // --- SESSION MIDDLEWARE --- //
-const sessionStore = new PgStore({
-  pool: db,
-  table: "users",
-  createTableIfMissing: true,
+const sessionStore = new PrismaStore(db, {
+  checkPeriod: 2 * 60 * 1000, //ms
+  dbRecordIdIsSessionId: true,
+  dbRecordIdFunction: undefined,
 });
 
 app.use(
@@ -49,6 +49,17 @@ app.use("/", homeRouter);
 
 // --- SERVER --- //
 const PORT = process.env.PORT;
-app.listen(3000, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+app
+  .listen(3000, () => {
+    console.log("-------------------------");
+    console.log(`Listening on PORT:${PORT}...`);
+    console.log("-------------------------");
+  })
+  .then(async () => {
+    db.$disconnect();
+  })
+  .catch(async (err) => {
+    console.log(err);
+    db.$disconnect();
+    process.exit(1);
+  });
