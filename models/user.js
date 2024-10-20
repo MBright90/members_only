@@ -1,8 +1,8 @@
 const db = require("../config/database");
 
 // TABLE users
-// id: integer,
-// username: VARCHAR,
+// id: INT Primary key,
+// username: VARCHAR Unique,
 // first_name: VARCHAR,
 // last_name: VARCHAR,
 // hash: VARCHAR,
