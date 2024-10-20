@@ -3,9 +3,11 @@
 <body>
     <h1>Recent Posts</h1>
 
+    <a href="/">Go home</a>
+
     <% if (posts.length > 0) { %>
 
-        <% for (let post in posts) { %>
+        <% for (let post of posts) { %>
             <div class="post">
                 <h2><%= post.title %></h2>
                 <p><%= post.message %></p>
@@ -20,3 +22,5 @@
     <% } %>
 
 </body>
+
+<% include("./partials/foot") %>
