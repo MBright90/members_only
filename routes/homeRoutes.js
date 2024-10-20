@@ -1,8 +1,10 @@
 const express = require("express");
 const passport = require("passport");
+const cors = require("cors");
 const userController = require("../controllers/userController");
 
 const router = new express.Router();
+router.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // --- POST ROUTES --- //
 router.post(
@@ -37,7 +39,7 @@ router.get("/register", (req, res) => {
 router.get("/", (req, res) => {
   const user = req.user;
   if (user) {
-    res.render("home", { name: user.first_name });
+    res.render("home", { user: { name: user.first_name, id: user.id } });
   } else {
     res.render("landing-page");
   }

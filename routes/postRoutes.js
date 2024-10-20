@@ -1,14 +1,19 @@
 const express = require("express");
+const cors = require("cors");
 const postController = require("../controllers/postController");
+const { isPaid, isAuth } = require("../lib/authMiddleware");
 
 const router = express.Router();
+router.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // --- POST ROUTES --- //
-router.post("/new", postController.addPostToDatabase);
+router.post("/new", isPaid, postController.addPostToDatabase);
 
 // --- GET ROUTES --- //
-router.get("/posts/user=:userId", postController.getUsersPosts);
+router.get("/new", isPaid, (req, res) => res.render("./forms/new-post-form"));
 
-router.post("/", postController.getRecentPosts);
+router.get("/:userId", isAuth, postController.getUsersPosts);
+
+router.get("/", postController.getRecentPosts);
 
 module.exports = router;
