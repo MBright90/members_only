@@ -1,12 +1,21 @@
 const posts = require("../models/post");
-const { getUserById } = require("./userController");
+const prisma = require("../config/database");
 
 module.exports.addPostToDatabase = async function (req, res) {
-  const { title, message } = req.body;
-  const author = req.user.id;
+  const { title, content } = req.body;
+  const authorId = req.user.id;
+  const author = req.user.username;
 
   try {
-    await posts.createNewPost(author, title, message);
+    await prisma.post.create({
+      data: {
+        title,
+        content,
+        author,
+        authorId,
+      },
+    });
+
     res.redirect("/posts");
   } catch (err) {
     res.status(500).json({ err: err });
@@ -21,7 +30,7 @@ module.exports.getUsersPosts = async function (req, res) {
     if (result.length > 0) {
       res.render("user-posts", { username: result[0].author, posts: result });
     } else {
-      const author = await getUserById(authorId);
+      const author = await prisma.user.findFirst(authorId);
       res.render("user-posts", { username: author.username, posts: [] });
     }
   } catch (err) {
