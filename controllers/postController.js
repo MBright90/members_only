@@ -1,4 +1,4 @@
-const posts = require("models/posts");
+const posts = require("../models/post");
 const { getUserById } = require("./userController");
 
 module.exports.addPostToDatabase = async function (req, res) {
@@ -19,7 +19,7 @@ module.exports.getUsersPosts = async function (req, res) {
   try {
     const result = await posts.getPostsByUserId(authorId);
     if (result.length > 0) {
-      res.render("user-posts", { username: posts[0].author, posts: result });
+      res.render("user-posts", { username: result[0].author, posts: result });
     } else {
       const author = await getUserById(authorId);
       res.render("user-posts", { username: author.username, posts: [] });
