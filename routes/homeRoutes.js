@@ -7,6 +7,19 @@ const router = new express.Router();
 router.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 // --- POST ROUTES --- //
+router.get(
+  "/guest-log-in",
+  (req, res, next) => {
+    (req.body.username = process.env.GUEST_UN),
+      (req.body.password = process.env.GUEST_PW),
+      next();
+  },
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/log-in",
+  }),
+);
+
 router.post(
   "/log-in",
   passport.authenticate("local", {
@@ -18,7 +31,6 @@ router.post(
 router.post("/register", userController.addUserToDatabase);
 
 // --- GET ROUTES --- //
-
 router.get("/log-in", (req, res) => {
   res.render("forms/log-in-form");
 });
@@ -39,7 +51,7 @@ router.get("/register", (req, res) => {
 router.get("/", (req, res) => {
   const user = req.user;
   if (user) {
-    res.render("home", { user: { name: user.first_name, id: user.id } });
+    res.render("home", { user: { name: user.username, id: user.id } });
   } else {
     res.render("landing-page");
   }
