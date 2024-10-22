@@ -1,19 +1,19 @@
 <%- include("./partials/head") %>
-<%- include("./partials/header") %>
 
 <body class="text-center">
 
-<div class="welcome-container d-flex h-100 p-3 mx-auto flex-column">
-
-    <main role="main" class="inner cover">
+<div class="site-container d-flex h-100 mx-auto flex-column">
+    <%- include("./partials/header") %>
+    <main class="inner cover">
       <h1 class="cover-heading">Welcome</h1>
       <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
       <p class="lead">
-        <a href="/log-in" class="btn btn-lg btn-primary">Log in</a> or 
+        <a href="/log-in" class="btn btn-lg btn-primary">Sign in</a> or 
         <a href="/register" class="btn btn-lg btn-primary">Register</a>
       </p>
+      <p>
+        Don't want to sign up? Sign in as a <a href="/guest-log-in" method="POST" class="link">Guest</a>
+      </p>
     </main>
-
+    <%- include("./partials/foot") %>
 </div>
-
-<%- include("./partials/foot") %>

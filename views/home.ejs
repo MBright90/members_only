@@ -1,14 +1,21 @@
 <%- include("./partials/head") %>
 
-<body>
-    <h1>Welcome <%= user ? user.name : '' %></h1>
-    <a href="/posts/new">Create new post</a>
-    <br>
-    <a href="/posts/">View all posts</a>
-    <br>
-    <a href="/posts/<%=user.id%>" style="margin-top: 10px;">View your posts</a>
-    <br>
-    <a href="/log-out" style="margin-top: 10px;">Log out</a>
-</body>
+<div class="home-container d-flex h-100 mx-auto flex-column">
+    <%- include("./partials/header") %>
+    <main>
+        <div class="mx-1">
+            <h1>Hello <%= user ? user.name : '' %>,</h1>
+        </div>
+        <nav class="d-flex flex-row align-items-center justify-content-space-around">
+            <a href="/posts/new" class="link btn btn-primary nav-btn">Create</a>
+            <a href="/posts" class="link btn btn-primary nav-btn">View All</a>
+            <a href="/posts/<%=user.id%>" class="link btn btn-primary nav-btn">View Yours</a>
+            <a href="/log-out" class="link btn btn-primary nav-btn">Log Out</a>
+        </nav>
+        <div class="container mx-1">
+            Place recent posts here
 
-<%- include("./partials/foot") %>
+        </div>
+    </main>
+    <%- include("./partials/foot") %>
+</div>
