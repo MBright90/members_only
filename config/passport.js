@@ -6,7 +6,9 @@ const db = require("../config/database");
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      const user = await db.user.findFirst({ where: { username } });
+      const user = await db.user.findFirst({
+        where: { username: { equals: username, mode: "insensitive" } },
+      });
 
       if (!user) return done(null, false, { message: "Incorrect username" });
 
