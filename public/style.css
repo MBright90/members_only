@@ -1,8 +1,14 @@
 body {
-    background-color: #333;
+    background:
+      repeating-conic-gradient(#f2e9e1 0 12.5%,#99b2b7 0 25%)
+      0/100px 100px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+body > div {
+    background-color: #333; 
 }
 
 header {
@@ -37,11 +43,6 @@ header a {
     -o-transition: .2s;
 }
 
-header a:hover {
-    border-bottom: 2px solid #fff;
-    color: #bbb;
-}
-
 footer {
     color: #eee;
     margin: 5px auto 5px auto;
@@ -50,19 +51,35 @@ footer {
 }
 
 .link {
+    font-weight: bold;
     text-decoration: none;
 }
 
-.welcome-container {
+.link-animation {
+    padding: .1em;
+    background: 
+    linear-gradient(#0d6efd 0 0) no-repeat
+    var(--p,0) 100%/var(--p, 0) .1em;
+    
+    transition: 0.4s, background-position 0s;
+    -webkit-transition: 0.4s, background-position 0s;
+    -moz-transition: 0.4s, background-position 0s;
+    -o-transition: 0.4s, background-position 0s;
+}
+  
+.link-animation:hover {
+    --p: 100%;
+}
+
+.site-container {
     color: #eee;
     flex: 1;
     max-width: 42em;
     margin-top: auto;
 }
 
-.welcome-container main {
-    margin: auto;
-    padding-bottom: 15%;
+.site-container main {
+    margin: 10px;
 }
 
 .welcome-container .btn {
@@ -71,24 +88,28 @@ footer {
 
 /* Forms */
 
-form {
-    padding-bottom: 40%;
+.form-signin, .form-register, .form-post {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
-label {
-    margin-right: 5px;
+.form-signin input {
+    margin: 0 20px;
+    max-width: 400px;
 }
 
 .form-signin input:first-of-type {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    margin-top: 10px;
+    margin-top: 30px;
 }
 
 .form-signin input:last-of-type {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 
 .form-register > div:first-of-type {
@@ -97,6 +118,42 @@ label {
 
 .form-signin .btn {
     border-radius: 5px;
+}
+
+.form-post .control-wrapper {
+    flex: 1;
+    min-width: 300px;
+    width: 80%;
+}
+
+.form-post textarea {
+    min-height: 100px;
+    height: 300px;
+}
+
+/* Home */
+
+.home-container {
+    color: #eee;
+    flex: 1;
+    width: 42em;
+    max-width: 42em;
+    margin-bottom: auto;
+}
+
+.home-container main {
+    margin-bottom: auto;
+    padding-top: 30px;
+    width: 100%;
+}
+
+.home-container main h1 {
+    text-align: left;
+}
+
+.nav-btn {
+    border-radius: 0;
+    flex: 1;
 }
 
 /* Screen reader */
