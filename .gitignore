@@ -3,3 +3,5 @@
 
 /prisma/migrations/
 .env
+
+lib/addCustomUser.js
