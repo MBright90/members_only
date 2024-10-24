@@ -1,4 +1,5 @@
 const prisma = require("../config/database");
+const { formatTimeAgo } = require("../lib/timeUtils");
 
 module.exports.addPostToDatabase = async function (req, res) {
   const { title, content } = req.body;
@@ -20,26 +21,67 @@ module.exports.addPostToDatabase = async function (req, res) {
 };
 
 module.exports.getUsersPosts = async function (req, res) {
-  const authorId = req.params.userId;
+  const authorId = parseInt(req.params.userId);
 
   try {
     const result = await prisma.post.findMany({
-      where: { authorId },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            username: true,
+          },
+        },
+      },
+      where: {
+        authorId: authorId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
+
+    const formattedPosts = result.map((post) => {
+      post.createdAgo = formatTimeAgo(post.createdAt);
+      return post;
+    });
+
     if (result.length > 0) {
-      res.render("user-posts", { username: result[0].author, posts: result });
+      res.render("user-posts", {
+        posts: formattedPosts,
+        user: { name: req.user.username, id: req.user.id },
+        author: formattedPosts[0].author.username,
+        errMsg: null,
+      });
     } else {
-      const author = await prisma.user.findFirst(authorId);
-      res.render("user-posts", { username: author.username, posts: [] });
+      const author = await prisma.user.findFirst({
+        where: {
+          id: authorId,
+        },
+      });
+      res.render("user-posts", {
+        posts: [],
+        user: { name: req.user.username, id: req.user.id },
+        author: author.username,
+        errMsg: null,
+      });
     }
   } catch (err) {
-    res.status(500).json({ err: err });
+    console.log(`Err retrieving posts for user ${authorId}: ${err}`);
+    res.render("user-posts", {
+      posts: [],
+      user: { name: req.user.username, id: req.user.id },
+      author: null,
+      errMsg: `Err retrieving posts for user`,
+    });
   }
 };
 
 module.exports.getRecentPosts = async function (req, res) {
   try {
-    console.log("Finding posts..");
     const result = await prisma.post.findMany({
       select: {
         id: true,
@@ -57,9 +99,23 @@ module.exports.getRecentPosts = async function (req, res) {
       },
       take: 20,
     });
-    console.log(result);
-    res.render("recent-posts", { posts: result });
+
+    const formattedPosts = result.map((post) => {
+      post.createdAgo = formatTimeAgo(post.createdAt);
+      return post;
+    });
+
+    res.render("recent-posts", {
+      posts: formattedPosts,
+      user: { name: req.user.username, id: req.user.id },
+      errMsg: null,
+    });
   } catch (err) {
-    res.status(500).json({ err: err });
+    console.log(`Error retrieving recent posts: ${err}`);
+    res.render("recent-posts", {
+      posts: [],
+      user: { name: req.user.username, id: req.user.id },
+      errMsg: "Error retrieving recent posts",
+    });
   }
 };
