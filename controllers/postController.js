@@ -119,3 +119,56 @@ module.exports.getRecentPosts = async function (req, res) {
     });
   }
 };
+
+module.exports.getReportForm = async function (req, res) {
+  const { postId } = req.params;
+
+  try {
+    const result = await prisma.post.findFirst({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            username: true,
+          },
+        },
+      },
+      where: {
+        id: parseInt(postId),
+      },
+    });
+
+    console.log(result);
+
+    if (result) {
+      const formattedPost = {
+        ...result,
+        createdAgo: formatTimeAgo(result.createdAt),
+      };
+
+      console.log(formattedPost);
+
+      res.render("./forms/report-form", {
+        post: formattedPost,
+        user: { name: req.user.username, id: req.user.id },
+        errMsg: null,
+      });
+    } else {
+      res.render("./forms/report-form", {
+        post: null,
+        user: { name: req.user.username, id: req.user.id },
+        errMsg: ["Could not find post", "Please try again later"],
+      });
+    }
+  } catch (err) {
+    console.log(`Err retrieving post ${postId} for report: ${err}`);
+    res.render("./forms/report-form", {
+      post: null,
+      user: { name: req.user.username, id: req.user.id },
+      errMsg: ["Could not match report to post", "Please try again later"],
+    });
+  }
+};
