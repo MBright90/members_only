@@ -51,7 +51,11 @@ router.get("/register", (req, res) => {
 router.get("/", (req, res) => {
   const user = req.user;
   if (user) {
-    res.render("home", { user: { name: user.username, id: user.id } });
+    console.log(user.id);
+    res.render("home", {
+      user: { name: user.username, id: user.id },
+      posts: [],
+    });
   } else {
     res.render("landing-page");
   }
