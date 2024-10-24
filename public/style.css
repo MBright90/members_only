@@ -5,6 +5,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    user-select: none;
 }
 
 body > div {
@@ -60,7 +61,7 @@ footer {
 .link-animation {
     padding: .1em;
     background: 
-    linear-gradient(#0d6efd 0 0) no-repeat
+    linear-gradient(#eee 0 0) no-repeat
     var(--p,0) 100%/var(--p, 0) .1em;
     
     transition: 0.4s, background-position 0s;
@@ -87,6 +88,10 @@ footer {
 
 .welcome-container .btn {
     width: 120px;
+}
+
+.ml-auto {
+    margin-left: auto;
 }
 
 .mx-minus {
@@ -156,7 +161,7 @@ footer {
     height: 300px;
 }
 
-.form-title {
+.form-title, .neon-text {
     animation: neon-shimmer 1s infinite alternate;
 }
 
@@ -168,6 +173,31 @@ footer {
     display: flex;
     flex: 1;
     justify-content: center;
+}
+
+/* Posts */
+
+.post-card {
+    background-color: #333;
+    color: #eee;
+    border-bottom: 0 0 2px #fff;
+    position: relative;
+}
+
+.card-deck > .post-card::after {
+    content: '';
+    position: absolute;
+    background-color: #eee;
+    height: 3px;
+    width: 96%;
+
+    box-shadow: 
+    0 0 .2rem #fff,
+    0 0 .2rem #fff,
+    0 0 2rem #0d6efd,
+    0 0 0.8rem #0D6EFE,
+    0 0 8rem #0d6efd,
+    inset 0 0 1.3rem #fff;
 }
 
 /* Screen reader */
