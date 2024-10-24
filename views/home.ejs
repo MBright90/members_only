@@ -3,17 +3,18 @@
 <div class="site-container full-screen d-flex h-100 mx-auto flex-column">
     <%- include("./partials/header") %>
     <main class="flex-grow-1">
-        <div class="mx-1">
-            <h1>Hello <%= user ? user.name : '' %>,</h1>
-        </div>
-        <nav class="d-flex flex-row align-items-stretch justify-content-space-around mx-minus">
-            <a href="/posts/new" class="link btn btn-primary nav-btn">Create</a>
-            <a href="/posts" class="link btn btn-primary nav-btn">View All</a>
-            <a href="/posts/<%=user.id%>" class="link btn btn-primary nav-btn">View Yours</a>
-            <a href="/log-out" class="link btn btn-primary nav-btn">Log Out</a>
-        </nav>
+        <%- include("./partials/userNav") %>
         <div class="container mx-1 my-2">
-            Place recent posts here
+            
+            <% if (!posts || posts.length <= 0) { %>
+
+                <div class="no-posts d-flex flex-column align-items-center my-5 mx-2">
+                    <h1 class="neon-text fw-bold">Uh oh</h1>
+                    <p class="lead fw-bold">It appears you haven't made any posts yet</p>
+                    <p>Click <a class="link" href="/posts/new">here</a> to create your first.</p>
+                </div>
+
+            <% } %>
 
         </div>
     </main>
