@@ -1,0 +1,9 @@
+<div class="mx-1">
+    <h1>Hello <span class="text-primary"><%= user ? user.name : '' %></span>,</h1>
+</div>
+<nav class="d-flex flex-row align-items-stretch justify-content-space-around mx-minus">
+    <a href="/posts/new" class="link btn btn-primary nav-btn">Create</a>
+    <a href="/posts/" class="link btn btn-primary nav-btn">View All</a>
+    <a href="/posts/<%= user.id %>" class="link btn btn-primary nav-btn">View Yours</a>
+    <a href="/log-out" class="link btn btn-primary nav-btn">Log Out</a>
+</nav>
