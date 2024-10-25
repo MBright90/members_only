@@ -14,17 +14,18 @@ model Post {
   content   String
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
+  reports   Report[]
 }
 
 model User {
-  id         Int     @id @default(autoincrement())
-  username   String  @unique
-  email      String  @unique
-  salt       String
-  hash       String
-  paid       Boolean @default(true)
-  admin      Boolean @default(false)
-  posts      Post[]
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  email    String  @unique
+  salt     String
+  hash     String
+  paid     Boolean @default(true)
+  admin    Boolean @default(false)
+  posts    Post[]
 }
 
 model Session {
@@ -32,4 +33,11 @@ model Session {
   sid       String   @unique
   data      String
   expiresAt DateTime
+}
+
+model Report {
+  id     Int    @id @default(autoincrement())
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+  reason String @db.VarChar(255)
 }
