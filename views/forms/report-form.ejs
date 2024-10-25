@@ -20,10 +20,11 @@
                     </div>
                 </div>
             </div>
-            <form class="form-post my-5" action="/report-:postId" method="POST">
+            <form class="form-post my-5" action="/posts/report-<%= post.id %>" method="POST">
+                <input class="sr-only" name="postId" id="postId" value="<%=post.id%>" disabled>
                 <div class="d-flex flex-row align-items-center mb-4 control-wrapper">
                     <div class="form-outline flex-fill mb-0">
-                        <textarea type="text" name="reason" id="reason" class="form-control report-textarea" placeholder="Reason for report" required></textarea>
+                        <textarea type="text" name="reason" id="reason" class="form-control report-textarea" placeholder="Reason for report" max="255" required></textarea>
                         <label class="sr-only" for="reason">Content: </label>
                     </div>
                 </div>
