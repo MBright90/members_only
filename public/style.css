@@ -179,6 +179,18 @@ footer {
     justify-content: center;
 }
 
+.neon-border {
+    border: 3px solid #eee;
+    border-radius: 20px;
+    box-shadow: 
+    0 0 .1rem #fff,
+    0 0 .1rem #fff,
+    0 0 1rem #0d6efd,
+    0 0 0.4rem #0D6EFE,
+    0 0 1rem #0d6efd,
+    inset 0 0 1rem #0D6EFD;
+}
+
 /* Posts */
 
 .post-card {
