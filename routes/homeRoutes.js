@@ -1,7 +1,9 @@
 const express = require("express");
 const passport = require("passport");
 const cors = require("cors");
+const postController = require("../controllers/postController");
 const userController = require("../controllers/userController");
+const { isAdmin } = require("../lib/authMiddleware");
 
 const router = new express.Router();
 router.use(cors({ origin: "http://localhost:3000", credentials: true }));
@@ -48,10 +50,11 @@ router.get("/register", (req, res) => {
   res.render("forms/register-form");
 });
 
+router.get("/dashboard", isAdmin, postController.getAdminDashboard);
+
 router.get("/", (req, res) => {
   const user = req.user;
   if (user) {
-    console.log(user.id);
     res.render("home", {
       user: { name: user.username, id: user.id },
       posts: [],
