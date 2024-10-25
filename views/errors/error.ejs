@@ -1,9 +1,13 @@
-<%- include("./partials/head") %>
+<%- include("../partials/head") %>
 
 <div class="site-container full-screen d-flex h-100 mx-auto flex-column">
-    <%- include("./partials/header") %>
+    <%- include("../partials/header") %>
     <main class="flex-grow-1">
-        <%- include("./partials/userNav") %>
+
+        <% if (user) { %>
+            <%- include("../partials/userNav") %>
+        <% } %>
+
         <div class="d-flex flex-column justify-content-center mx-1 my-5">
             <h1 class="neon-text text-center">Error</h1>
             <% if (errMsg) { %>
@@ -14,8 +18,9 @@
                 <p class="lead text-center">Something went wrong</p>
                 <p class="lead text-center">Please try again later</p>
             <% } %>
+            <p class="lead text-center">Click <a class="link" href="/">here</a> to go home.</p>
 
         </div>
     </main>
-    <%- include("./partials/foot") %>
+    <%- include("../partials/foot") %>
 </div>
