@@ -49,6 +49,15 @@ app.use("/posts/", postRouter);
 app.use("/", homeRouter);
 
 // --- ERROR HANDLING --- //
+app.get("/*", (req, res) => {
+  const options = req.user
+    ? {
+        user: { name: req.user.username, id: req.user.id },
+      }
+    : { user: null };
+
+  res.status(404).render("errors/404.ejs", options);
+});
 
 // --- SERVER --- //
 const PORT = process.env.PORT;
