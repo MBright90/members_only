@@ -141,15 +141,11 @@ module.exports.getReportForm = async function (req, res) {
       },
     });
 
-    console.log(result);
-
     if (result) {
       const formattedPost = {
         ...result,
         createdAgo: formatTimeAgo(result.createdAt),
       };
-
-      console.log(formattedPost);
 
       res.render("./forms/report-form", {
         post: formattedPost,
@@ -157,10 +153,9 @@ module.exports.getReportForm = async function (req, res) {
         errMsg: null,
       });
     } else {
-      res.render("./forms/report-form", {
-        post: null,
+      res.render("./errors/error", {
         user: { name: req.user.username, id: req.user.id },
-        errMsg: ["Could not find post", "Please try again later"],
+        errMsg: ["Could not retrieve post", "Please try again later"],
       });
     }
   } catch (err) {
@@ -173,8 +168,55 @@ module.exports.getReportForm = async function (req, res) {
   }
 };
 
+module.exports.getAdminDashboard = async function (req, res) {
+  try {
+    const result = await prisma.report.findMany({
+      select: {
+        id: true,
+        reason: true,
+        resolved: true,
+        post: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            createdAt: true,
+            author: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        resolved: false,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    const formattedReports = result.map((report) => {
+      report.post.createdAgo = formatTimeAgo(report.post.createdAt);
+      return report;
+    });
+
+    res.render("adminDashboard", {
+      user: { name: req.user.username, id: req.user.id },
+      reports: formattedReports,
+    });
+  } catch (err) {
+    console.log(`Error retrieving reports: ${err}`);
+    res.status(500).render("errors/error", {
+      user: { name: req.user.username, id: req.user.id },
+      errMsg: ["Error retrieving reports", "Please try again later"],
+    });
+  }
+};
+
 module.exports.postReportForm = async function (req, res) {
-  console.log(req.body);
   const postId = parseInt(req.body.postId);
   const { reason } = req.body;
 
