@@ -172,3 +172,25 @@ module.exports.getReportForm = async function (req, res) {
     });
   }
 };
+
+module.exports.postReportForm = async function (req, res) {
+  console.log(req.body);
+  const postId = parseInt(req.body.postId);
+  const { reason } = req.body;
+
+  try {
+    await prisma.report.create({
+      data: {
+        postId,
+        reason,
+      },
+    });
+    res.redirect("/");
+  } catch (err) {
+    console.log(`Error reporting post: ${err}`);
+    res.status(401).render(`errors/error`, {
+      user: { name: req.user.username, id: req.user.id },
+      errMsg: ["Error reporting post", "Please try again later"],
+    });
+  }
+};
