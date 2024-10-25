@@ -9,6 +9,8 @@ router.use(cors({ origin: "http://localhost:3000", credentials: true }));
 // --- POST ROUTES --- //
 router.post("/new", isPaid, postController.addPostToDatabase);
 
+router.post("/report-:postId", isAuth, postController.postReportForm);
+
 // --- GET ROUTES --- //
 router.get("/new", isPaid, (req, res) =>
   res.render("./forms/new-post-form", {
