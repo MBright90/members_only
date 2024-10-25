@@ -56,7 +56,7 @@ app.get("/*", (req, res) => {
       }
     : { user: null };
 
-  res.status(404).render("errors/404.ejs", options);
+  res.status(404).render("errors/404", options);
 });
 
 // --- SERVER --- //
