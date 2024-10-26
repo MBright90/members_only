@@ -4,7 +4,7 @@
 <nav class="d-flex flex-row align-items-stretch justify-content-space-around mx-minus">
     <a href="/posts/new" class="link btn btn-primary nav-btn">Create</a>
     <a href="/posts/" class="link btn btn-primary nav-btn">View All</a>
-    <a href="/posts/<%= user.id %>" class="link btn btn-primary nav-btn">View Yours</a>
+    <a href="/posts/user/<%= user.id %>" class="link btn btn-primary nav-btn">View Yours</a>
     <% if (user.admin) { %>
         <a href="/dashboard" class="link btn btn-primary nav-btn">Dashboard</a>
     <% } %>
