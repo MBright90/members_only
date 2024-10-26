@@ -16,7 +16,7 @@
                             <h3 class="fw-bold"><%= post.title %></h3>
                             <p class="lead"><%= post.content %></p>
                             <div class="d-flex">
-                                <p>Written by: <span class="fw-bold mx-2"><%= post.author.username %></span></p>
+                                <p>Written by: <a href="/posts/user/<%=post.author.id%>" class="link fw-bold mx-2"><%= post.author.username %></a></p>
                                 <div class="d-flex ml-auto gap-1">
                                     <p class="fw-bold text-right"><%= post.createdAgo %></p>
 
