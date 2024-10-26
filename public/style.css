@@ -117,6 +117,9 @@ footer {
 }
 
 /* Forms */
+textarea {
+    resize: none;
+}
 
 .form-signin, .form-register, .form-post {
     display: flex;
@@ -199,12 +202,14 @@ footer {
     position: relative;
 }
 
-.card-deck > .post-card::after {
+.post-card::after {
     content: '';
     position: absolute;
     background-color: #eee;
     height: 3px;
-    width: 96%;
+    right: 0;
+    bottom: 0;
+    left: 0;
 
     box-shadow: 
     0 0 .2rem #fff,
