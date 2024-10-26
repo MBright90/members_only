@@ -2,6 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const cors = require("cors");
 const postController = require("../controllers/postController");
+const commentController = require("../controllers/commentController");
 const userController = require("../controllers/userController");
 const { isAdmin } = require("../lib/authMiddleware");
 
@@ -54,7 +55,7 @@ router.get("/dashboard/posts", isAdmin, postController.getAdminDashboardPosts);
 router.get(
   "/dashboard/comments",
   isAdmin,
-  postController.getAdminDashboardComments,
+  commentController.getAdminDashboardComments,
 );
 router.get("/dashboard", (req, res) => {
   res.redirect("dashboard/posts");
