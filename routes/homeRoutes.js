@@ -50,7 +50,15 @@ router.get("/register", (req, res) => {
   res.render("forms/register-form");
 });
 
-router.get("/dashboard", isAdmin, postController.getAdminDashboard);
+router.get("/dashboard/posts", isAdmin, postController.getAdminDashboardPosts);
+router.get(
+  "/dashboard/comments",
+  isAdmin,
+  postController.getAdminDashboardComments,
+);
+router.get("/dashboard", (req, res) => {
+  res.redirect("dashboard/posts");
+});
 
 router.get("/", (req, res) => {
   const user = req.user;

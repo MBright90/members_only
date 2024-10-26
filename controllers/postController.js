@@ -187,9 +187,9 @@ module.exports.getReportForm = async function (req, res) {
   }
 };
 
-module.exports.getAdminDashboard = async function (req, res) {
+module.exports.getAdminDashboardPosts = async function (req, res) {
   try {
-    const result = await prisma.report.findMany({
+    const result = await prisma.postReport.findMany({
       select: {
         id: true,
         reason: true,
@@ -222,15 +222,62 @@ module.exports.getAdminDashboard = async function (req, res) {
       return report;
     });
 
-    res.render("adminDashboard", {
+    res.render("adminDashboardPosts", {
       user: req.user,
       reports: formattedReports,
     });
   } catch (err) {
-    console.log(`Error retrieving reports: ${err}`);
+    console.log(`Error retrieving post reports: ${err}`);
     res.status(500).render("errors/error", {
       user: req.user,
-      errMsg: ["Error retrieving reports", "Please try again later"],
+      errMsg: ["Error retrieving post reports", "Please try again later"],
+    });
+  }
+};
+
+module.exports.getAdminDashboardComments = async function (req, res) {
+  try {
+    const result = await prisma.commentReport.findMany({
+      select: {
+        id: true,
+        reason: true,
+        resolved: true,
+        comment: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            author: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        resolved: false,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    const formattedReports = result.map((report) => {
+      report.comment.createdAgo = formatTimeAgo(report.comment.createdAt);
+      return report;
+    });
+
+    res.render("adminDashboardComments", {
+      user: req.user,
+      reports: formattedReports,
+    });
+  } catch (err) {
+    console.log(`Error retrieving post reports: ${err}`);
+    res.status(500).render("errors/error", {
+      user: req.user,
+      errMsg: ["Error retrieving post reports", "Please try again later"],
     });
   }
 };
@@ -240,7 +287,7 @@ module.exports.postReportForm = async function (req, res) {
   const { reason } = req.body;
 
   try {
-    await prisma.report.create({
+    await prisma.postReport.create({
       data: {
         postId,
         reason,
