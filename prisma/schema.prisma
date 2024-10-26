@@ -8,25 +8,38 @@ datasource db {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  title     String   @db.VarChar(255)
+  id        Int          @id @default(autoincrement())
+  createdAt DateTime     @default(now())
+  title     String       @db.VarChar(255)
   content   String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
-  reports   Report[]
+  comments  Comment[]
+  reports   PostReport[]
+}
+
+model Comment {
+  id        Int             @id @default(autoincrement())
+  createdAt DateTime        @default(now())
+  content   String          @db.VarChar(255)
+  author    User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+  post      Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
+  reports   CommentReport[]
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  username  String   @unique
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  username  String    @unique
+  email     String    @unique
   salt      String
   hash      String
-  paid      Boolean  @default(true)
-  admin     Boolean  @default(false)
+  paid      Boolean   @default(true)
+  admin     Boolean   @default(false)
   posts     Post[]
+  comments  Comment[]
 }
 
 model Session {
@@ -36,11 +49,20 @@ model Session {
   expiresAt DateTime
 }
 
-model Report {
+model PostReport {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
+  reason    String   @db.VarChar(255)
+  resolved  Boolean  @default(false)
+}
+
+model CommentReport {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Int
   reason    String   @db.VarChar(255)
   resolved  Boolean  @default(false)
 }
