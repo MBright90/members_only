@@ -52,7 +52,7 @@ app.use("/", homeRouter);
 app.get("/*", (req, res) => {
   const options = req.user
     ? {
-        user: { name: req.user.username, id: req.user.id },
+        user: req.user,
       }
     : { user: null };
 

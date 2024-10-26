@@ -16,12 +16,24 @@ module.exports.addPostToDatabase = async function (req, res) {
 
     res.redirect("/posts");
   } catch (err) {
-    res.status(500).json({ err: err });
+    console.log(`Error uploading post: ${err}`);
+    res.status(500).render("/errors/error", {
+      user: req.user,
+      errMsg: ["Error adding post to database", "Please try again later"],
+    });
   }
 };
 
 module.exports.getUsersPosts = async function (req, res) {
   const authorId = parseInt(req.params.userId);
+
+  // if authorId is not a valid INT
+  if (!authorId) {
+    res.render("errors/error", {
+      user: req.user,
+      errMsg: ["That user does not exist"],
+    });
+  }
 
   try {
     const result = await prisma.post.findMany({
@@ -52,7 +64,7 @@ module.exports.getUsersPosts = async function (req, res) {
     if (result.length > 0) {
       res.render("user-posts", {
         posts: formattedPosts,
-        user: { name: req.user.username, id: req.user.id },
+        user: req.user,
         author: formattedPosts[0].author.username,
         errMsg: null,
       });
@@ -62,18 +74,25 @@ module.exports.getUsersPosts = async function (req, res) {
           id: authorId,
         },
       });
-      res.render("user-posts", {
-        posts: [],
-        user: { name: req.user.username, id: req.user.id },
-        author: author.username,
-        errMsg: null,
-      });
+      if (author) {
+        res.render("user-posts", {
+          posts: [],
+          user: req.user,
+          author: author.username,
+          errMsg: null,
+        });
+      } else {
+        res.render("errors/error", {
+          user: req.user,
+          errMsg: ["That user does not exist"],
+        });
+      }
     }
   } catch (err) {
     console.log(`Err retrieving posts for user ${authorId}: ${err}`);
     res.render("user-posts", {
       posts: [],
-      user: { name: req.user.username, id: req.user.id },
+      user: req.user,
       author: null,
       errMsg: `Err retrieving posts for user`,
     });
@@ -107,14 +126,14 @@ module.exports.getRecentPosts = async function (req, res) {
 
     res.render("recent-posts", {
       posts: formattedPosts,
-      user: { name: req.user.username, id: req.user.id },
+      user: req.user,
       errMsg: null,
     });
   } catch (err) {
     console.log(`Error retrieving recent posts: ${err}`);
     res.render("recent-posts", {
       posts: [],
-      user: { name: req.user.username, id: req.user.id },
+      user: req.user,
       errMsg: "Error retrieving recent posts",
     });
   }
@@ -149,12 +168,12 @@ module.exports.getReportForm = async function (req, res) {
 
       res.render("./forms/report-form", {
         post: formattedPost,
-        user: { name: req.user.username, id: req.user.id },
+        user: req.user,
         errMsg: null,
       });
     } else {
       res.render("./errors/error", {
-        user: { name: req.user.username, id: req.user.id },
+        user: req.user,
         errMsg: ["Could not retrieve post", "Please try again later"],
       });
     }
@@ -162,7 +181,7 @@ module.exports.getReportForm = async function (req, res) {
     console.log(`Err retrieving post ${postId} for report: ${err}`);
     res.render("./forms/report-form", {
       post: null,
-      user: { name: req.user.username, id: req.user.id },
+      user: req.user,
       errMsg: ["Could not match report to post", "Please try again later"],
     });
   }
@@ -204,13 +223,13 @@ module.exports.getAdminDashboard = async function (req, res) {
     });
 
     res.render("adminDashboard", {
-      user: { name: req.user.username, id: req.user.id },
+      user: req.user,
       reports: formattedReports,
     });
   } catch (err) {
     console.log(`Error retrieving reports: ${err}`);
     res.status(500).render("errors/error", {
-      user: { name: req.user.username, id: req.user.id },
+      user: req.user,
       errMsg: ["Error retrieving reports", "Please try again later"],
     });
   }
@@ -231,7 +250,7 @@ module.exports.postReportForm = async function (req, res) {
   } catch (err) {
     console.log(`Error reporting post: ${err}`);
     res.status(401).render(`errors/error`, {
-      user: { name: req.user.username, id: req.user.id },
+      user: req.user,
       errMsg: ["Error reporting post", "Please try again later"],
     });
   }

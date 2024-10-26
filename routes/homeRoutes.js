@@ -56,7 +56,7 @@ router.get("/", (req, res) => {
   const user = req.user;
   if (user) {
     res.render("home", {
-      user: { name: user.username, id: user.id },
+      user,
       posts: [],
     });
   } else {

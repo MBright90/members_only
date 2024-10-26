@@ -14,7 +14,7 @@ router.post("/report-:postId", isAuth, postController.postReportForm);
 // --- GET ROUTES --- //
 router.get("/new", isPaid, (req, res) =>
   res.render("./forms/new-post-form", {
-    user: { name: req.user.username, id: req.user.id },
+    user: req.user,
   }),
 );
 
