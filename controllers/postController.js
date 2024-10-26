@@ -82,7 +82,7 @@ module.exports.getUsersPosts = async function (req, res) {
           errMsg: null,
         });
       } else {
-        res.render("errors/error", {
+        res.render("./errors/error", {
           user: req.user,
           errMsg: ["That user does not exist"],
         });
@@ -90,11 +90,53 @@ module.exports.getUsersPosts = async function (req, res) {
     }
   } catch (err) {
     console.log(`Err retrieving posts for user ${authorId}: ${err}`);
-    res.render("user-posts", {
-      posts: [],
+    res.render("./errors/error", {
       user: req.user,
-      author: null,
-      errMsg: `Err retrieving posts for user`,
+      errMsg: ["Error retrieving posts for user"],
+    });
+  }
+};
+
+module.exports.getPostWithComments = async function (req, res) {
+  const postId = parseInt(req.params.postId);
+
+  try {
+    const result = await prisma.post.findFirst({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        comments: true,
+      },
+      where: {
+        id: postId,
+      },
+    });
+
+    if (result) {
+      console.log(result);
+      res.render("post", {
+        user: req.user,
+        post: result,
+      });
+    } else {
+      res.render("./errors/error", {
+        user: req.user,
+        errMsg: ["Could not retrieve post"],
+      });
+    }
+  } catch (err) {
+    console.log(`Error retrieving post with comments: ${err}`);
+    res.render("./errors/error", {
+      user: req.user,
+      errMsg: ["Could not retrieve post"],
     });
   }
 };
@@ -109,6 +151,7 @@ module.exports.getRecentPosts = async function (req, res) {
         createdAt: true,
         author: {
           select: {
+            id: true,
             username: true,
           },
         },
@@ -166,7 +209,7 @@ module.exports.getReportForm = async function (req, res) {
         createdAgo: formatTimeAgo(result.createdAt),
       };
 
-      res.render("./forms/report-form", {
+      res.render("./forms/report-post-form", {
         post: formattedPost,
         user: req.user,
         errMsg: null,
@@ -179,8 +222,7 @@ module.exports.getReportForm = async function (req, res) {
     }
   } catch (err) {
     console.log(`Err retrieving post ${postId} for report: ${err}`);
-    res.render("./forms/report-form", {
-      post: null,
+    res.render("./errors/error", {
       user: req.user,
       errMsg: ["Could not match report to post", "Please try again later"],
     });
@@ -228,54 +270,7 @@ module.exports.getAdminDashboardPosts = async function (req, res) {
     });
   } catch (err) {
     console.log(`Error retrieving post reports: ${err}`);
-    res.status(500).render("errors/error", {
-      user: req.user,
-      errMsg: ["Error retrieving post reports", "Please try again later"],
-    });
-  }
-};
-
-module.exports.getAdminDashboardComments = async function (req, res) {
-  try {
-    const result = await prisma.commentReport.findMany({
-      select: {
-        id: true,
-        reason: true,
-        resolved: true,
-        comment: {
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            author: {
-              select: {
-                id: true,
-                username: true,
-              },
-            },
-          },
-        },
-      },
-      where: {
-        resolved: false,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
-
-    const formattedReports = result.map((report) => {
-      report.comment.createdAgo = formatTimeAgo(report.comment.createdAt);
-      return report;
-    });
-
-    res.render("adminDashboardComments", {
-      user: req.user,
-      reports: formattedReports,
-    });
-  } catch (err) {
-    console.log(`Error retrieving post reports: ${err}`);
-    res.status(500).render("errors/error", {
+    res.status(500).render("./errors/error", {
       user: req.user,
       errMsg: ["Error retrieving post reports", "Please try again later"],
     });
@@ -296,7 +291,7 @@ module.exports.postReportForm = async function (req, res) {
     res.redirect("/");
   } catch (err) {
     console.log(`Error reporting post: ${err}`);
-    res.status(401).render(`errors/error`, {
+    res.status(401).render(`./errors/error`, {
       user: req.user,
       errMsg: ["Error reporting post", "Please try again later"],
     });
