@@ -18,7 +18,7 @@ router.get("/new", isPaid, (req, res) =>
   }),
 );
 
-router.get("/report-form-:postId", isAuth, postController.getReportForm);
+router.get("/report-post-form-:postId", isAuth, postController.getReportForm);
 
 router.get("/user/:userId", isAuth, postController.getUsersPosts);
 
