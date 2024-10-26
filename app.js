@@ -10,6 +10,7 @@ const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 // Routers
 const homeRouter = require("./routes/homeRoutes");
 const postRouter = require("./routes/postRoutes");
+const commentRouter = require("./routes/commentRoutes");
 
 const app = express();
 app.set("view engine", "ejs");
@@ -46,6 +47,7 @@ app.use(passport.session());
 
 // --- ROUTES --- //
 app.use("/posts/", postRouter);
+app.use("/comments/", commentRouter);
 app.use("/", homeRouter);
 
 // --- ERROR HANDLING --- //
