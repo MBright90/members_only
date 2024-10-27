@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const postController = require("../controllers/postController");
-const { isPaid, isAuth } = require("../lib/authMiddleware");
+const { isPaid, isAuth, isAdmin } = require("../lib/authMiddleware");
 
 const router = express.Router();
 router.use(cors({ origin: "http://localhost:3000", credentials: true }));
@@ -19,6 +19,18 @@ router.get("/new", isPaid, (req, res) =>
 );
 
 router.get("/report-post-form-:postId", isAuth, postController.getReportForm);
+
+router.get(
+  "/resolve-report-delete-:reportId",
+  isAdmin,
+  postController.deletePostFromReport,
+);
+
+router.get(
+  "/resolve-report-remove-:reportId",
+  isAdmin,
+  postController.resolvePostFromReport,
+);
 
 router.get("/user/:userId", isAuth, postController.getUsersPosts);
 
