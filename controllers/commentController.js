@@ -17,7 +17,7 @@ module.exports.addCommentToDatabase = async function (req, res) {
 
     res.redirect(`/posts/${postId}`);
   } catch (err) {
-    console.log(`Error uploading post: ${err}`);
+    console.log(`Error uploading comment: ${err}`);
     res.status(500).render("./errors/error", {
       user: req.user,
       errMsg: ["Error adding comment", "Please try again later"],
@@ -26,7 +26,8 @@ module.exports.addCommentToDatabase = async function (req, res) {
 };
 
 module.exports.postReportComment = async function (req, res) {
-  const { reason, commentId } = req.body;
+  const { reason } = req.body;
+  const commentId = parseInt(req.body.commentId);
 
   try {
     await prisma.commentReport.create({
@@ -85,10 +86,115 @@ module.exports.getAdminDashboardComments = async function (req, res) {
       reports: formattedReports,
     });
   } catch (err) {
-    console.log(`Error retrieving post reports: ${err}`);
+    console.log(`Error retrieving comment reports: ${err}`);
     res.status(500).render("./errors/error", {
       user: req.user,
-      errMsg: ["Error retrieving post reports", "Please try again later"],
+      errMsg: ["Error retrieving comment reports", "Please try again later"],
     });
   }
+};
+
+module.exports.getReportForm = async function (req, res) {
+  const commentId = parseInt(req.params.commentId);
+
+  try {
+    const result = await prisma.comment.findFirst({
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        author: {
+          select: {
+            username: true,
+          },
+        },
+      },
+      where: {
+        id: commentId,
+      },
+    });
+
+    if (result) {
+      const formattedComment = {
+        ...result,
+        createdAgo: formatTimeAgo(result.createdAt),
+      };
+
+      res.render("./forms/report-comment-form", {
+        comment: formattedComment,
+        user: req.user,
+      });
+    } else {
+      res.render("./errors/error", {
+        user: req.user,
+        errMsg: ["Could not retrieve comment", "Please try again later"],
+      });
+    }
+  } catch (err) {
+    console.log(`Err retrieving Comment ${commentId} for report: ${err}`);
+    res.render("./errors/error", {
+      user: req.user,
+      errMsg: ["Could not match report to comment", "Please try again later"],
+    });
+  }
+};
+
+module.exports.deleteCommentFromReport = async function (req, res) {
+  const reportId = parseInt(req.params.reportId);
+
+  try {
+    await prisma.$transaction(async (db) => {
+      // Retrieve and resolve report
+      const updateReport = await db.commentReport.update({
+        where: {
+          id: reportId,
+        },
+        data: {
+          resolved: true,
+        },
+      });
+
+      // delete comment
+      const deleteResult = await db.comment.delete({
+        where: {
+          id: updateReport.commentId,
+        },
+      });
+
+      console.log(
+        `Deleting comment ${updateReport.commentId}: ${deleteResult}`,
+      );
+    });
+    res.redirect("/dashboard/comments");
+  } catch (err) {
+    console.log(`Err deleting comment by report: ${err}`);
+    res.render("/errors/error", {
+      user: req.user,
+      errMsg: ["Error resolving report", "Please try again later"],
+    });
+  }
+};
+
+module.exports.resolveCommentFromReport = async function (req, res) {
+  const reportId = parseInt(req.params.reportId);
+
+  try {
+    await prisma.commentReport.update({
+      where: {
+        id: reportId,
+      },
+      data: {
+        resolved: true,
+      },
+    });
+    res.redirect("/dashboard/comments");
+  } catch (err) {
+    console.log(`Err resolving report: ${err}`);
+    res.render("/errors/error", {
+      user: req.user,
+      errMsg: ["Error resolving report", "Please try again later"],
+    });
+  }
+
+  res.redirect("/dashboard/comments");
 };
