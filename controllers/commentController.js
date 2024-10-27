@@ -40,7 +40,7 @@ module.exports.postReportComment = async function (req, res) {
     res.redirect("/posts");
   } catch (err) {
     console.log(`Error adding comment: ${err}`);
-    res.render("./errors/error", {
+    res.status(500).render("./errors/error", {
       user: req.user,
       errMsg: ["Error creating report", "Please try again later"],
     });
@@ -132,7 +132,7 @@ module.exports.getReportForm = async function (req, res) {
     }
   } catch (err) {
     console.log(`Err retrieving Comment ${commentId} for report: ${err}`);
-    res.render("./errors/error", {
+    res.status(500).render("./errors/error", {
       user: req.user,
       errMsg: ["Could not match report to comment", "Please try again later"],
     });
@@ -162,13 +162,13 @@ module.exports.deleteCommentFromReport = async function (req, res) {
       });
 
       console.log(
-        `Deleting comment ${updateReport.commentId}: ${deleteResult}`,
+        `Deleting comment ${updateReport.commentId}: ${JSON.stringify(deleteResult, null, 2)}`,
       );
     });
     res.redirect("/dashboard/comments");
   } catch (err) {
     console.log(`Err deleting comment by report: ${err}`);
-    res.render("/errors/error", {
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Error resolving report", "Please try again later"],
     });
@@ -179,7 +179,7 @@ module.exports.resolveCommentFromReport = async function (req, res) {
   const reportId = parseInt(req.params.reportId);
 
   try {
-    await prisma.commentReport.update({
+    const result = await prisma.commentReport.update({
       where: {
         id: reportId,
       },
@@ -187,14 +187,15 @@ module.exports.resolveCommentFromReport = async function (req, res) {
         resolved: true,
       },
     });
+    console.log(
+      `Resolved report ${reportId}: ${JSON.stringify(result, null, 2)}`,
+    );
     res.redirect("/dashboard/comments");
   } catch (err) {
     console.log(`Err resolving report: ${err}`);
-    res.render("/errors/error", {
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Error resolving report", "Please try again later"],
     });
   }
-
-  res.redirect("/dashboard/comments");
 };

@@ -90,7 +90,7 @@ module.exports.getUsersPosts = async function (req, res) {
     }
   } catch (err) {
     console.log(`Err retrieving posts for user ${authorId}: ${err}`);
-    res.render("./errors/error", {
+    res.status(500).render("./errors/error", {
       user: req.user,
       errMsg: ["Error retrieving posts for user"],
     });
@@ -145,7 +145,7 @@ module.exports.getPostWithComments = async function (req, res) {
     }
   } catch (err) {
     console.log(`Error retrieving post with comments: ${err}`);
-    res.render("./errors/error", {
+    res.status(500).render("./errors/error", {
       user: req.user,
       errMsg: ["Could not retrieve post"],
     });
@@ -185,10 +185,9 @@ module.exports.getRecentPosts = async function (req, res) {
     });
   } catch (err) {
     console.log(`Error retrieving recent posts: ${err}`);
-    res.render("recent-posts", {
-      posts: [],
+    res.status(500).render("/errors/error", {
       user: req.user,
-      errMsg: "Error retrieving recent posts",
+      errMsg: ["Error retrieving recent posts"],
     });
   }
 };
@@ -233,7 +232,7 @@ module.exports.getReportForm = async function (req, res) {
     }
   } catch (err) {
     console.log(`Err retrieving post ${postId} for report: ${err}`);
-    res.render("./errors/error", {
+    res.status(500).render("./errors/error", {
       user: req.user,
       errMsg: ["Could not match report to post", "Please try again later"],
     });
@@ -302,7 +301,7 @@ module.exports.postReportForm = async function (req, res) {
     res.redirect("/");
   } catch (err) {
     console.log(`Error reporting post: ${err}`);
-    res.status(401).render(`./errors/error`, {
+    res.status(500).render(`./errors/error`, {
       user: req.user,
       errMsg: ["Error reporting post", "Please try again later"],
     });
@@ -310,9 +309,63 @@ module.exports.postReportForm = async function (req, res) {
 };
 
 module.exports.deletePostFromReport = async function (req, res) {
-  res.redirect("/dashboard/posts");
+  const reportId = parseInt(req.params.reportId);
+  console.log(reportId);
+
+  try {
+    await prisma.$transaction(async (db) => {
+      // Retrieve and resolve report
+      const updateReport = await db.postReport.update({
+        where: {
+          id: reportId,
+        },
+        data: {
+          resolved: true,
+        },
+      });
+
+      // delete comment
+      const deleteResult = await db.post.delete({
+        where: {
+          id: updateReport.postId,
+        },
+      });
+
+      console.log(
+        `Deleting post ${updateReport.postId}: ${JSON.stringify(deleteResult, null, 2)}`,
+      );
+    });
+    res.redirect("/dashboard/posts");
+  } catch (err) {
+    console.log(`Err deleting post by report: ${err}`);
+    res.status(500).render("/errors/error", {
+      user: req.user,
+      errMsg: ["Error resolving report", "Please try again later"],
+    });
+  }
 };
 
 module.exports.resolvePostFromReport = async function (req, res) {
-  res.redirect("/dashboard/posts");
+  const reportId = parseInt(req.params.reportId);
+
+  try {
+    const result = await prisma.postReport.update({
+      where: {
+        id: reportId,
+      },
+      data: {
+        resolved: true,
+      },
+    });
+    console.log(
+      `Resolved report ${reportId}: ${JSON.stringify(result, null, 2)}`,
+    );
+    res.redirect("/dashboard/posts");
+  } catch (err) {
+    console.log(`Err resolving report: ${err}`);
+    res.status(500).render("/errors/error", {
+      user: req.user,
+      errMsg: ["Error resolving report", "Please try again later"],
+    });
+  }
 };
