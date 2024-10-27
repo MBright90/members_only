@@ -102,26 +102,37 @@ module.exports.getPostWithComments = async function (req, res) {
 
   try {
     const result = await prisma.post.findFirst({
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        createdAt: true,
+      where: {
+        id: postId,
+      },
+      include: {
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
         author: {
           select: {
             id: true,
             username: true,
           },
         },
-        comments: true,
-      },
-      where: {
-        id: postId,
       },
     });
 
     if (result) {
-      console.log(result);
+      result.createdAgo = formatTimeAgo(result.createdAt);
+      result.comments.forEach((comment) => {
+        comment.createdAgo = formatTimeAgo(comment.createdAt);
+      });
       res.render("post", {
         user: req.user,
         post: result,
@@ -296,4 +307,12 @@ module.exports.postReportForm = async function (req, res) {
       errMsg: ["Error reporting post", "Please try again later"],
     });
   }
+};
+
+module.exports.deletePostFromReport = async function (req, res) {
+  res.redirect("/dashboard/posts");
+};
+
+module.exports.resolvePostFromReport = async function (req, res) {
+  res.redirect("/dashboard/posts");
 };
