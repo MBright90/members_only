@@ -1,0 +1,42 @@
+<%- include("../partials/head") %>
+
+<body>
+<div class="site-container d-flex h-100 mx-auto flex-column">
+    <%- include("../partials/header") %>
+    <main class="inner flex-grow-1">
+        <%- include("../partials/userNav") %>
+        <div class="d-flex flex-column align-items-stretch mx-2 my-3">
+            
+            <h1 class="form-title text-center my-2">Report Post</h1>
+            
+            <!-- Show reported post to remind user -->
+            <div class="post-card m-3 p-3">
+                <p class="lead"><%= comment.content %></p>
+                <div class="d-flex">
+                    <p>Written by: <span class="fw-bold mx-2"><%= comment.author.username %></span></p>
+                    <div class="d-flex ml-auto gap-1">
+                        <p class="fw-bold text-right"><%= comment.createdAgo %></p>
+                    </div>
+                </div>
+            </div>
+            <form class="form-post my-5" action="/comments/report-<%= comment.id %>" method="POST">
+                <input type="hidden" name="commentId" id="commentId" value="<%=comment.id%>">
+                <div class="d-flex flex-row align-items-center mb-4 control-wrapper">
+                    <div class="form-outline flex-fill mb-0">
+                        <textarea type="text" name="reason" id="reason" class="form-control report-textarea" placeholder="Reason for report" max="255" required></textarea>
+                        <label class="sr-only" for="reason">Content: </label>
+                    </div>
+                </div>
+                <div class="d-flex flex-row align-items-center mb-4">
+                    <div class="form-outline flex-fill mb-0">
+                        <button type="submit" class="btn btn-primary" style="margin-right: 20px;">Report</button>
+                        <a href="/posts/<%=comment.postId%>" class="btn btn-primary">Cancel</a>
+                    </div>
+                </div>
+            
+            </form>
+        </div>
+    </main>
+    <%- include("../partials/foot") %>
+</div>
+</body>
