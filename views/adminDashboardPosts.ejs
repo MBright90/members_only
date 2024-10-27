@@ -31,8 +31,8 @@
                                 <p class="flex-grow"><%= report.reason %></p>
                             </div>
                             <div class="admin-controls d-flex justify-content-center gap-2">
-                                <a href="/posts/resolve-report-delete-:reportId" class="btn btn-lg btn-primary">Delete Post</a>
-                                <a href="/posts/resolve-report-remove-:reportId" class="btn btn-lg btn-primary">Resolve Report</a>
+                                <a href="/posts/resolve-report-delete-<%=report.id%>" class="btn btn-lg btn-primary">Delete Post</a>
+                                <a href="/posts/resolve-report-remove-<%=report.id%>" class="btn btn-lg btn-primary">Resolve Report</a>
                             </div>
                         </div>
                         
