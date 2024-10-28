@@ -332,7 +332,7 @@ module.exports.deletePostFromReport = async function (req, res) {
       });
 
       console.log(
-        `Deleting post ${updateReport.postId}: ${JSON.stringify(deleteResult, null, 2)}`,
+        `Deleting post ${updateReport.postId} via report ${reportId}: ${JSON.stringify(deleteResult, null, 2)}`,
       );
     });
     res.redirect("/dashboard/posts");

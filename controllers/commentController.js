@@ -162,7 +162,7 @@ module.exports.deleteCommentFromReport = async function (req, res) {
       });
 
       console.log(
-        `Deleting comment ${updateReport.commentId}: ${JSON.stringify(deleteResult, null, 2)}`,
+        `Deleting comment ${updateReport.commentId} via report ${reportId}: ${JSON.stringify(deleteResult, null, 2)}`,
       );
     });
     res.redirect("/dashboard/comments");
