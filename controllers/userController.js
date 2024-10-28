@@ -16,7 +16,10 @@ module.exports.addUserToDatabase = async function (req, res) {
     });
     res.redirect("/log-in");
   } catch (err) {
-    res.status(500).json({ err: err });
+    console.log(`Error adding user to database: ${err}`);
+    res
+      .status(500)
+      .render("/errors/error", { errMsg: ["Error adding user to database"] });
   }
 };
 
