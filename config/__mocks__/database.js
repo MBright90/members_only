@@ -14,6 +14,9 @@ const prisma = {
     findMany: jest.fn(),
     update: jest.fn(),
   },
+  $transaction: jest.fn(async (callback) => {
+    await callback(prisma);
+  }),
 };
 
 module.exports = prisma;
