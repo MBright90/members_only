@@ -2,11 +2,13 @@ const prisma = require("../config/database");
 const { formatTimeAgo } = require("../lib/timeUtils");
 
 module.exports.addCommentToDatabase = async function (req, res) {
-  const { content } = req.body;
-  const postId = parseInt(req.body.postId);
-  const authorId = req.user.id;
-
   try {
+    const { content } = req.body;
+    const postId = parseInt(req.body.postId);
+    const authorId = req.user.id;
+
+    if (isNaN(postId)) throw new Error("Invalid postId");
+
     await prisma.comment.create({
       data: {
         content,
@@ -18,7 +20,7 @@ module.exports.addCommentToDatabase = async function (req, res) {
     res.redirect(`/posts/${postId}`);
   } catch (err) {
     console.log(`Error uploading comment: ${err}`);
-    res.status(500).render("./errors/error", {
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Error adding comment", "Please try again later"],
     });
@@ -26,10 +28,12 @@ module.exports.addCommentToDatabase = async function (req, res) {
 };
 
 module.exports.postReportComment = async function (req, res) {
-  const { reason } = req.body;
-  const commentId = parseInt(req.body.commentId);
-
   try {
+    const { reason } = req.body;
+    const commentId = parseInt(req.body.commentId);
+
+    if (isNaN(commentId)) throw new Error("Invalid commentId");
+
     await prisma.commentReport.create({
       data: {
         commentId,
@@ -40,7 +44,7 @@ module.exports.postReportComment = async function (req, res) {
     res.redirect("/posts");
   } catch (err) {
     console.log(`Error adding comment: ${err}`);
-    res.status(500).render("./errors/error", {
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Error creating report", "Please try again later"],
     });
@@ -87,7 +91,7 @@ module.exports.getAdminDashboardComments = async function (req, res) {
     });
   } catch (err) {
     console.log(`Error retrieving comment reports: ${err}`);
-    res.status(500).render("./errors/error", {
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Error retrieving comment reports", "Please try again later"],
     });
@@ -95,9 +99,10 @@ module.exports.getAdminDashboardComments = async function (req, res) {
 };
 
 module.exports.getReportForm = async function (req, res) {
-  const commentId = parseInt(req.params.commentId);
-
   try {
+    const commentId = parseInt(req.params.commentId);
+    if (isNaN(commentId)) throw new Error("Invalid commentId");
+
     const result = await prisma.comment.findFirst({
       select: {
         id: true,
@@ -125,14 +130,16 @@ module.exports.getReportForm = async function (req, res) {
         user: req.user,
       });
     } else {
-      res.render("./errors/error", {
+      res.render("/errors/error", {
         user: req.user,
         errMsg: ["Could not retrieve comment", "Please try again later"],
       });
     }
   } catch (err) {
-    console.log(`Err retrieving Comment ${commentId} for report: ${err}`);
-    res.status(500).render("./errors/error", {
+    console.log(
+      `Err retrieving comment ${req.params.commentId} for report: ${err}`,
+    );
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Could not match report to comment", "Please try again later"],
     });
@@ -140,9 +147,10 @@ module.exports.getReportForm = async function (req, res) {
 };
 
 module.exports.deleteCommentFromReport = async function (req, res) {
-  const reportId = parseInt(req.params.reportId);
-
   try {
+    const reportId = parseInt(req.params.reportId);
+    if (isNaN(reportId)) throw new Error("Invalid reportId");
+
     await prisma.$transaction(async (db) => {
       // Retrieve and resolve report
       const updateReport = await db.commentReport.update({
@@ -153,6 +161,10 @@ module.exports.deleteCommentFromReport = async function (req, res) {
           resolved: true,
         },
       });
+
+      if (!updateReport || isNaN(updateReport.commentId)) {
+        throw new Error("Invalid commentId");
+      }
 
       // delete comment
       const deleteResult = await db.comment.delete({
@@ -176,9 +188,10 @@ module.exports.deleteCommentFromReport = async function (req, res) {
 };
 
 module.exports.resolveCommentFromReport = async function (req, res) {
-  const reportId = parseInt(req.params.reportId);
-
   try {
+    const reportId = parseInt(req.params.reportId);
+    if (isNaN(reportId)) throw new Error("Invalid reportId");
+
     const result = await prisma.commentReport.update({
       where: {
         id: reportId,
@@ -187,6 +200,7 @@ module.exports.resolveCommentFromReport = async function (req, res) {
         resolved: true,
       },
     });
+
     console.log(
       `Resolved report ${reportId}: ${JSON.stringify(result, null, 2)}`,
     );
