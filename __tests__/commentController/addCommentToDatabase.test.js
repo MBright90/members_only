@@ -33,7 +33,7 @@ describe("addCommentToDatabase", () => {
     jest.clearAllMocks();
   });
 
-  it("adds a new user and redirects to the posts address", async () => {
+  it("adds a new comment and redirects to the posts address", async () => {
     prisma.comment.create.mockResolvedValueOnce({
       id: 10,
       content: "message content",
