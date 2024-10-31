@@ -25,17 +25,10 @@ module.exports.addPostToDatabase = async function (req, res) {
 };
 
 module.exports.getUsersPosts = async function (req, res) {
-  const authorId = parseInt(req.params.userId);
-
-  // if authorId is not a valid INT
-  if (!authorId) {
-    res.render("errors/error", {
-      user: req.user,
-      errMsg: ["That user does not exist"],
-    });
-  }
-
   try {
+    const authorId = parseInt(req.params.userId);
+    if (isNaN(authorId)) throw new Error("User does not exist");
+
     const result = await prisma.post.findMany({
       select: {
         id: true,
@@ -56,17 +49,16 @@ module.exports.getUsersPosts = async function (req, res) {
       },
     });
 
-    const formattedPosts = result.map((post) => {
-      post.createdAgo = formatTimeAgo(post.createdAt);
-      return post;
-    });
-
     if (result.length > 0) {
+      const formattedPosts = result.map((post) => {
+        post.createdAgo = formatTimeAgo(post.createdAt);
+        return post;
+      });
+
       res.render("user-posts", {
         posts: formattedPosts,
         user: req.user,
         author: formattedPosts[0].author.username,
-        errMsg: null,
       });
     } else {
       const author = await prisma.user.findFirst({
@@ -79,18 +71,14 @@ module.exports.getUsersPosts = async function (req, res) {
           posts: [],
           user: req.user,
           author: author.username,
-          errMsg: null,
         });
       } else {
-        res.render("./errors/error", {
-          user: req.user,
-          errMsg: ["That user does not exist"],
-        });
+        throw new Error("That user does not exist");
       }
     }
   } catch (err) {
-    console.log(`Err retrieving posts for user ${authorId}: ${err}`);
-    res.status(500).render("./errors/error", {
+    console.log(`Err retrieving posts for user ${req.params.userId}: ${err}`);
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Error retrieving posts for user"],
     });
@@ -98,9 +86,10 @@ module.exports.getUsersPosts = async function (req, res) {
 };
 
 module.exports.getPostWithComments = async function (req, res) {
-  const postId = parseInt(req.params.postId);
-
   try {
+    const postId = parseInt(req.params.postId);
+    if (isNaN(postId)) throw new Error("Invalid postId");
+
     const result = await prisma.post.findFirst({
       where: {
         id: postId,
@@ -138,14 +127,14 @@ module.exports.getPostWithComments = async function (req, res) {
         post: result,
       });
     } else {
-      res.render("./errors/error", {
+      res.render("/errors/error", {
         user: req.user,
         errMsg: ["Could not retrieve post"],
       });
     }
   } catch (err) {
     console.log(`Error retrieving post with comments: ${err}`);
-    res.status(500).render("./errors/error", {
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Could not retrieve post"],
     });
@@ -181,7 +170,6 @@ module.exports.getRecentPosts = async function (req, res) {
     res.render("recent-posts", {
       posts: formattedPosts,
       user: req.user,
-      errMsg: null,
     });
   } catch (err) {
     console.log(`Error retrieving recent posts: ${err}`);
@@ -193,9 +181,10 @@ module.exports.getRecentPosts = async function (req, res) {
 };
 
 module.exports.getReportForm = async function (req, res) {
-  const { postId } = req.params;
-
   try {
+    const postId = parseInt(req.params.postId);
+    if (isNaN(postId)) throw new Error("Invalid postId");
+
     const result = await prisma.post.findFirst({
       select: {
         id: true,
@@ -209,7 +198,7 @@ module.exports.getReportForm = async function (req, res) {
         },
       },
       where: {
-        id: parseInt(postId),
+        id: postId,
       },
     });
 
@@ -222,17 +211,16 @@ module.exports.getReportForm = async function (req, res) {
       res.render("./forms/report-post-form", {
         post: formattedPost,
         user: req.user,
-        errMsg: null,
       });
     } else {
-      res.render("./errors/error", {
+      res.render("/errors/error", {
         user: req.user,
         errMsg: ["Could not retrieve post", "Please try again later"],
       });
     }
   } catch (err) {
-    console.log(`Err retrieving post ${postId} for report: ${err}`);
-    res.status(500).render("./errors/error", {
+    console.log(`Err retrieving post ${req.params.postId} for report: ${err}`);
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Could not match report to post", "Please try again later"],
     });
@@ -280,7 +268,7 @@ module.exports.getAdminDashboardPosts = async function (req, res) {
     });
   } catch (err) {
     console.log(`Error retrieving post reports: ${err}`);
-    res.status(500).render("./errors/error", {
+    res.status(500).render("/errors/error", {
       user: req.user,
       errMsg: ["Error retrieving post reports", "Please try again later"],
     });
@@ -288,10 +276,11 @@ module.exports.getAdminDashboardPosts = async function (req, res) {
 };
 
 module.exports.postReportForm = async function (req, res) {
-  const postId = parseInt(req.body.postId);
-  const { reason } = req.body;
-
   try {
+    const { reason } = req.body;
+    const postId = parseInt(req.body.postId);
+    if (isNaN(postId)) throw new Error("Invalid postId");
+
     await prisma.postReport.create({
       data: {
         postId,
@@ -301,7 +290,7 @@ module.exports.postReportForm = async function (req, res) {
     res.redirect("/");
   } catch (err) {
     console.log(`Error reporting post: ${err}`);
-    res.status(500).render(`./errors/error`, {
+    res.status(500).render(`/errors/error`, {
       user: req.user,
       errMsg: ["Error reporting post", "Please try again later"],
     });
@@ -309,10 +298,10 @@ module.exports.postReportForm = async function (req, res) {
 };
 
 module.exports.deletePostFromReport = async function (req, res) {
-  const reportId = parseInt(req.params.reportId);
-  console.log(reportId);
-
   try {
+    const reportId = parseInt(req.params.reportId);
+    if (isNaN(reportId)) throw new Error("Invalid reportId");
+
     await prisma.$transaction(async (db) => {
       // Retrieve and resolve report
       const updateReport = await db.postReport.update({
@@ -346,9 +335,10 @@ module.exports.deletePostFromReport = async function (req, res) {
 };
 
 module.exports.resolvePostFromReport = async function (req, res) {
-  const reportId = parseInt(req.params.reportId);
-
   try {
+    const reportId = parseInt(req.params.reportId);
+    if (isNaN(reportId)) throw new Error("Invalid reportId");
+
     const result = await prisma.postReport.update({
       where: {
         id: reportId,
